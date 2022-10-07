@@ -1,18 +1,28 @@
-var myProductName = "getAxiosFeed", myVerion = "0.4.0";
+var myProductName = "getAxiosFeed", myVersion = "0.4.1";
 
 const fs = require ("fs");
 const utils = require ("daveutils"); 
 const request = require ("request");
 
 const config = {
-	feedUrl: "http://api.axios.com/feed/",
-	localPath: "/Users/davewiner/publicFolder/feedland/feeds/axios.xml",
+	feeds: [
+		{
+			feedUrl: "http://api.axios.com/feed/",
+			localPath: "/Users/davewiner/publicFolder/feedland/feeds/axios.xml"
+			}
+		],
 	ctMinutesBetwReads: 10,
 	productName: "getAxiosFeed", 
 	version: "0.4.0"
 	}
 function httpReadUrl (url, callback) { //8/21/22 by DW
-	request (url, function (err, response, data) {
+	var theRequest = {
+		url: url, 
+		headers: {
+			"User-Agent": myProductName + " v" + myVersion
+			}
+		};
+	request (theRequest, function (err, response, data) {
 		if (err) {
 			callback (err);
 			}
@@ -30,29 +40,35 @@ function httpReadUrl (url, callback) { //8/21/22 by DW
 			}
 		});
 	}
-function updateFeed () {
+function updateFeed (theFeed) {
 	const whenstart = new Date ();
-	httpReadUrl (config.feedUrl, function (err, xmltext) {
+	httpReadUrl (theFeed.feedUrl, function (err, xmltext) {
 		if (err) {
 			console.log (err.message);
 			}
 		else {
-			fs.writeFile (config.localPath, xmltext, function (err) {
+			fs.writeFile (theFeed.localPath, xmltext, function (err) {
 				if (err) {
 					console.log ("fs.writeFile: err.message == " + err.message);
 					}
 				else {
-					console.log (whenstart.toLocaleTimeString () + ": " + config.productName + " v" + config.version + ", " + utils.secondsSince (whenstart) + " secs.\n");
+					console.log (whenstart.toLocaleTimeString () + ": " + config.productName + " v" + config.version + ", " + utils.secondsSince (whenstart) + " secs, theFeed.feedUrl == " + theFeed.feedUrl);
 					}
 				});
 			}
 		});
 	}
+function updateAllFeeds () {
+	console.log ("");
+	config.feeds.forEach (function (item) { //update each feed at start
+		updateFeed (item);
+		});
+	}
 function everyMinute () {
 	var now = new Date ();
 	if ((now.getMinutes () % config.ctMinutesBetwReads) == 0) {
-		updateFeed ();
+		updateAllFeeds ();
 		}
 	}
-updateFeed ();
+updateAllFeeds ();
 utils.runEveryMinute (everyMinute);

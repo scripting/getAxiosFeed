@@ -4,7 +4,7 @@
 	"author": "Dave Winer <dave@scripting.com>",
 	"main": "getaxiosfeed.js",
 	"license": "MIT",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"dependencies" : {
 		"daveutils": "*",
 		"request": "*"
