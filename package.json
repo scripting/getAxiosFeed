@@ -1,0 +1,12 @@
+{
+	"name": "getaxiosfeed",
+	"description": "Get Axios's feed.",
+	"author": "Dave Winer <dave@scripting.com>",
+	"main": "getaxiosfeed.js",
+	"license": "MIT",
+	"version": "0.4.0",
+	"dependencies" : {
+		"daveutils": "*",
+		"request": "*"
+		} 
+	}
